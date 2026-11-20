@@ -1,37 +1,51 @@
-name: Build Minecraft Mod
 
-on:
-  push:
-    branches: [main]
-  workflow_dispatch:
+plugins {
+    id 'fabric-loom' version '1.11-SNAPSHOT'
+}
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
+version = '0.1.0'
+group = 'com.frzxen'
 
-    steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+base {
+    archivesName = 'inventory-builder'
+}
 
-      - name: Set Up Java 21
-        uses: actions/setup-java@v4
-        with:
-          distribution: temurin
-          java-version: '21'
+loom {
+    enableModProvidedJavadoc = false
+}
 
-      - name: Set Up Gradle
-        uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: '8.14.3'
+repositories {
+    mavenCentral()
 
-      - name: Build Fabric Mod
-        working-directory: BuilderMod
-        run: gradle build
+    maven {
+        url = 'https://maven.fabricmc.net/'
+    }
+}
 
-      - name: Upload Mod JAR
-        uses: actions/upload-artifact@v4
-        with:
-          name: Inventory-Builder-Mod
-          path: |
-            BuilderMod/build/libs/*.jar
-            !BuilderMod/build/libs/*-sources.jar
+dependencies {
+    minecraft 'com.mojang:minecraft:1.21.11'
+
+    mappings 'net.fabricmc:yarn:1.21.11+build.1:v2'
+
+    modImplementation 'net.fabricmc:fabric-loader:0.18.1'
+
+    modImplementation 'net.fabricmc.fabric-api:fabric-api:0.139.4+1.21.11'
+}
+
+processResources {
+    inputs.property 'version', project.version
+
+    filesMatching('fabric.mod.json') {
+        expand version: project.version
+    }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release = 21
+    options.encoding = 'UTF-8'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
+}
