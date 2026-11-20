@@ -1,0 +1,3 @@
+{
+ "schemaVersion":1,"id":"inventory_builder","version":"${version}","name":"Inventory Builder","description":"Prompt-driven local structure plans with inventory-based placement.","environment":"client","entrypoints":{"client":["com.frzxen.builder.InventoryBuilder"]},"depends":{"fabricloader":">=0.18.0","minecraft":"1.21.11","java":">=21","fabric-api":"*"}
+}
